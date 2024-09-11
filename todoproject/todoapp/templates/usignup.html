@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<head>
+<title> Sqrt Finder App</title>
+<style>
+	*{ font-size: 40px; }
+	body{background-color:#f0f8ff; }
+
+
+
+.text {
+        position: fixed;
+        bottom: 5px;
+        right: 5px; 
+        background-color: azure;
+        padding: 10px;
+        border: 0px solid #ccc;
+        border-radius: 0px;
+	font-size: 12px;
+    }
+
+.sqrt-btn{background-color:#b6fcd5; border-color:#b6fcd5;}
+
+.sqrt-btn:hover {
+		background-color:#6897bb;
+	}
+
+</style>
+</head>
+	<h1> SignUp Page </h1>
+	<form method = "POST">
+	{% csrf_token %}
+	<input type = "email" name = "un" placeholder = "enter email" required/>
+	<br><br>
+	
+	
+
+	<input type = "submit" class="sqrt-btn" value = "Register"/>
+	</form>
+	<h2> We will email your password</h2>
+	<h2>{{ msg }}</h2>
+<div class="text">Akshata Pingle 0541 0224</div>
+{% endblock %}

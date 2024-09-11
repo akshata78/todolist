@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if form.instance.pk %}Edit{% else %}Create{% endif %} ToDo</title>
+
+    <!-- CSS for Styling with Color Scheme, Font Size, and Navbar -->
+    <style>
+        * {
+            font-family: 'Calibri', Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        body {
+            background-color: #f7f5f2;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 4vh 0;
+            font-size: 2.5em;
+            color: #ffb3b3;
+        }
+
+        /* Container for the entire page content */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        /* Rectangular Navbar */
+        nav {
+            background-color: #40e0d0;
+            width: 100%; /* Full width */
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        nav a{
+            color: black;
+    text-decoration: none;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+        }
+
+        /* Form Styling */
+        form {
+            background: #fff;
+            padding: 5vw;
+            max-width: 80vw;
+            margin: 10vh auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1vh;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 1em;
+            margin: 1vh 0 3vh;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1.1em;
+            background-color: #fce4ec;
+        }
+
+        button {
+            background-color: #b2dfdb;
+            padding: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background-color: #80cbc4;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-wrapper input {
+            margin-right: 1em;
+            transform: scale(1.5);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #ffb3b3;
+        }
+
+        textarea {
+            resize: none;
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+    </nav>
+    <div class="container">
+        <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} ToDo</h1>
+
+        <form method="POST" id="todoForm">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_title">Title:</label>
+                {{ form.title }}
+                <span class="error" id="titleError"></span>
+            </div>
+
+            <div>
+                <label for="id_description">Description:</label>
+                {{ form.description }}
+                <span class="error" id="descriptionError"></span>
+            </div>
+
+            <div class="checkbox-wrapper">
+                {{ form.completed }}
+                <label for="id_completed">Completed</label>
+            </div>
+
+            <div>
+                <label for="id_due_date">Due Date:</label>
+                {{ form.due_date }}
+                <span class="error" id="dueDateError"></span>
+            </div>
+
+            <div>
+                <label for="id_category">Choose a Category:</label>
+                {{ form.category }}
+                <span class="error" id="categoryError"></span>
+            </div>
+
+            <div>
+                <label for="id_new_category">Or Add a New Category:</label>
+                {{ form.new_category }}
+                <span class="error" id="newCategoryError"></span>
+            </div>
+
+            <button type="submit">Save</button>
+        </form>
+
+        <a href="{% url 'todo_list' %}">Back to List</a>
+    </div>
+
+    <script>
+        document.getElementById('todoForm').addEventListener('submit', function(e) {
+            let formIsValid = true;
+
+            document.getElementById('titleError').textContent = '';
+            document.getElementById('descriptionError').textContent = '';
+            document.getElementById('dueDateError').textContent = '';
+            document.getElementById('categoryError').textContent = '';
+            document.getElementById('newCategoryError').textContent = '';
+
+            let title = document.getElementById('id_title');
+            let description = document.getElementById('id_description');
+            let dueDate = document.getElementById('id_due_date');
+            let category = document.getElementById('id_category');
+            let newCategory = document.getElementById('id_new_category');
+
+            if (title && title.value.trim() === "") {
+                document.getElementById('titleError').textContent = "Title is required.";
+                formIsValid = false;
+            }
+
+            if (description && description.value.trim() === "") {
+                document.getElementById('descriptionError').textContent = "Description is required.";
+                formIsValid = false;
+            }
+
+            if (dueDate && dueDate.value === "") {
+                document.getElementById('dueDateError').textContent = "Due date is required.";
+                formIsValid = false;
+            }
+
+            if (category && category.value === "") {
+                document.getElementById('categoryError').textContent = "Please select a category.";
+                formIsValid = false;
+            }
+
+            if (newCategory && newCategory.value.trim() === "" && category.value === "") {
+                document.getElementById('newCategoryError').textContent = "Please add a new category or select an existing one.";
+                formIsValid = false;
+            }
+
+            if (!formIsValid) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}

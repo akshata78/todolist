@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <style>
+        * {
+            font-family: 'Calibri', Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        /* General body styling with a pastel background */
+        body {
+            background-color: #f7f5f2; /* Soft cream color */
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Container for the content */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff; /* White background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1, h2 {
+            color: #ffb3b3; /* Pastel pink for headings */
+            text-align: center;
+            font-size: 2em;
+        }
+
+        /* Navbar styling */
+        .nav {
+            background-color: #40e0d0; /* Soft pastel green */
+            padding: 20px;
+            text-align: center;
+        }
+
+        .nav a {
+            color: #333;
+            text-decoration: none;
+            margin: 40px;
+            font-size: 1.2em;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Button styling */
+        a.button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #b2dfdb; /* Soft pastel turquoise */
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 1.1em;
+        }
+
+        a.button:hover {
+            background-color: #80cbc4; /* Slightly darker turquoise on hover */
+        }
+
+        /* Form styling */
+        form {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        label {
+            margin-right: 10px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            background-color: #ffb3b3; /* Same pastel pink as Add ToDo button */
+            font-size: 1.1em;
+            color: white;
+        }
+
+        select option {
+            color: #333;
+        }
+
+        /* ToDo List Styling */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #fce4ec; /* Light pastel pink */
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li strong {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        ul li em {
+            color: #888;
+            font-size: 1em;
+            margin-left: 5px;
+        }
+
+        ul li div a.button {
+            margin-left: 10px;
+        }
+
+        ul li div a.button:first-child {
+            background-color: #b2dfdb;
+        }
+
+        ul li div a.button:first-child:hover {
+            background-color: #80cbc4;
+        }
+
+        /* Chart styling */
+        img {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Reminders Styling */
+        ul.reminders-list li {
+            background-color: #ffecb3; /* Pastel yellow for reminders */
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        ul.reminders-list li strong {
+            color: #ff6f00; /* Orange for text */
+        }
+
+        /* Unique styling for the Add ToDo button */
+        .add-todo-btn {
+            float: left;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #ffb3b3, #ff6f61); /* Pastel pink to coral */
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .add-todo-btn:hover {
+            background: linear-gradient(135deg, #ff6f61, #ffb3b3);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>ToDo List</h1>
+
+        <!-- Link to Add a New ToDo -->
+        <a href="{% url 'todo_create' %}" class="button add-todo-btn">+ Add New ToDo</a>
+<br><br><br>
+        <!-- Category Filter Form (moved below the Add ToDo button) -->
+
+        <form method="GET" action="{% url 'todo_list' %}">
+            <label for="category-filter">Filter by Category:</label>
+            <select name="category" id="category-filter" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category|stringformat:"s" %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+
+                {% endfor %}
+            </select>
+
+        </form>
+        <!-- List of ToDo Items -->
+        <ul>
+            {% for todo in todos %}
+            <li>
+                <div>
+                    <strong>{{ todo.title }}</strong> - {{ todo.description }} 
+                    {% if todo.category %}
+                    <em>(Category: {{ todo.category.name }})</em>
+                    {% endif %}
+                </div>
+                <div>
+                    <a href="{% url 'todo_update' todo.id %}" class="button">Edit</a> 
+                    <a href="{% url 'todo_delete' todo.id %}" class="button">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li>No ToDos found in this category!</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Section for Upcoming Reminders -->
+        <h2>Upcoming Reminders</h2>
+        <ul class="reminders-list">
+            {% for reminder in reminders %}
+            <li>
+                <strong>{{ reminder.title }}</strong> - Due on {{ reminder.due_date }}
+            </li>
+            {% empty %}
+            <li>No upcoming reminders.</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Pie Chart for Task Completion (now at the bottom) -->
+        <img src="{% url 'task_completion_pie_chart' %}" alt="Task Completion Pie Chart">
+
+    </div>
+</body>
+
+</html>
+{% endblock %}

@@ -1,0 +1,16 @@
+<!-- todoapp/templates/todo_confirm_delete.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete ToDo</title>
+</head>
+<body>
+    <h1>Delete ToDo: {{ todo.title }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <p>Are you sure you want to delete this item?</p>
+        <button type="submit">Delete</button>
+    </form>
+    <a href="{% url 'todo_list' %}">Cancel</a>
+</body>
+</html>
